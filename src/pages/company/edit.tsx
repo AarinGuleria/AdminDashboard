@@ -1,4 +1,4 @@
-import { Col, Form, InputNumber, Row, Select } from "antd";
+import { Col, Form, Input, InputNumber, Row, Select } from "antd";
 import { Edit, useForm, useSelect } from "@refinedev/antd";
 import { UPDATE_COMPANY_MUTATION } from "@/graphql/mutations";
 import CustomAvatar from "@/components/custom-avatar";
@@ -7,7 +7,8 @@ import { USERS_SELECT_QUERY } from "@/graphql/queries";
 import { UsersSelectQuery } from "@/graphql/types";
 import { GetFieldsFromList } from "@refinedev/nestjs-query";
 import SelectOptionWithAvatar from "@/components/select-option-with-avatar";
-import { companySizeOptions } from "@/constants";
+import { businessTypeOptions, companySizeOptions, industryOptions } from "@/constants";
+import { CompanyContactsTable } from "./contacts-table";
 
 const EditPage = () => {
   const { saveButtonProps, formProps, formLoading, queryResult } = useForm({
@@ -81,8 +82,23 @@ const EditPage = () => {
                   // formatter={(value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 />
               </Form.Item>
+              <Form.Item label="Industry">
+                <Select options={industryOptions}/>
+              </Form.Item>
+              <Form.Item label="Business type">
+                <Select options={businessTypeOptions}/>
+              </Form.Item>
+              <Form.Item label="Country" name="country">
+                <Input placeholder="Country"/>
+              </Form.Item>
+              <Form.Item label="Website" name="website">
+                <Input placeholder="Website" />
+              </Form.Item>
             </Form>
           </Edit>
+        </Col>
+        <Col xs={24} xl={12}>
+          <CompanyContactsTable />
         </Col>
       </Row>
     </div>
