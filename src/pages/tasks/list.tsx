@@ -1,8 +1,9 @@
+import { KanbanAddCardButton } from "@/components/tasks/kanban/add-card-button";
 import {
   KanbanBoard,
   KanbanBoardContainer,
 } from "@/components/tasks/kanban/board";
-import ProjectCard from "@/components/tasks/kanban/card";
+import ProjectCard, { ProjectCardMemo } from "@/components/tasks/kanban/card";
 import KanbanColumn from "@/components/tasks/kanban/column";
 import KanbanItem from "@/components/tasks/kanban/item";
 import { TASK_STAGES_QUERY, TASKS_QUERY } from "@/graphql/queries";
@@ -33,25 +34,26 @@ const List = () => {
     },
   });
 
-  const { data: tasks, isLoading: isLoadingTasks } =
-    useList <GetFieldsFromList<TasksQuery>>({
-      resource: "tasks",
-      sorters: [
-        {
-          field: "dueDate",
-          order: "asc",
-        },
-      ],
-      pagination: {
-        mode: "off",
+  const { data: tasks, isLoading: isLoadingTasks } = useList<
+    GetFieldsFromList<TasksQuery>
+  >({
+    resource: "tasks",
+    sorters: [
+      {
+        field: "dueDate",
+        order: "asc",
       },
-      queryOptions: {
-        enabled: !!stages,
-      },
-      meta: {
-        gqlQuery: TASKS_QUERY,
-      },
-    });
+    ],
+    pagination: {
+      mode: "off",
+    },
+    queryOptions: {
+      enabled: !!stages,
+    },
+    meta: {
+      gqlQuery: TASKS_QUERY,
+    },
+  });
 
   const taskStages = React.useMemo(() => {
     if (!tasks?.data || !stages?.data) {
@@ -65,7 +67,7 @@ const List = () => {
 
     const grouped: TaskStage[] = stages.data.map((stage) => ({
       ...stage,
-      tasks: tasks.data.filter((task) => task.stageId?.toString() === stage.id)
+      tasks: tasks.data.filter((task) => task.stageId?.toString() === stage.id),
     }));
     return {
       unnasignedStage,
@@ -88,19 +90,34 @@ const List = () => {
             {taskStages.unnasignedStage.map((task) => {
               return (
                 <KanbanItem
-                  key={task.id} id={task.id}
+                  key={task.id}
+                  id={task.id}
                   data={{ ...task, stageId: "unnasigned" }}
                 >
-                  <ProjectCard
+                  <ProjectCardMemo
                     {...task}
                     dueDate={task.dueDate || undefined}
-                  >
-                    
-                  </ProjectCard>
+                  ></ProjectCardMemo>
                 </KanbanItem>
               );
             })}
+
+            {!taskStages.unnasignedStage.length && (
+              <KanbanAddCardButton
+                onClick={() => handleAddCard({ stageId: "unnasigned" })}
+              />
+            )}
           </KanbanColumn>
+
+          {taskStages.columns?.map((column) => (
+            <KanbanColumn
+              key={column.id}
+              id={column.id}
+              title={column.title}
+              count={column.tasks.length}
+              onAddClick={() => handleAddCard({ stageId: column.id })}
+            ></KanbanColumn>
+          ))}
         </KanbanBoard>
       </KanbanBoardContainer>
     </>
