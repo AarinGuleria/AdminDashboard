@@ -14,29 +14,37 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { HttpError, getDefaultFilter, useGo } from "@refinedev/core";
-import { Input, Space, Table, ColProps } from "antd";
+import { GetFieldsFromList } from "@refinedev/nestjs-query";
+import { Input, Space, Table } from "antd";
 import React from "react";
-
-interface ISearch {
-  name: string;
-}
 
 export const CompanyList = ({ children }: React.PropsWithChildren) => {
   const go = useGo();
   const { tableProps, filters } = useTable<
-    CompaniesListQuery,
+    GetFieldsFromList<CompaniesListQuery>,
     HttpError,
-    ISearch
+    GetFieldsFromList<CompaniesListQuery>
   >({
     resource: "companies",
-    onSearch: (value) => {
-      return [{ field: "name", operator: "contains", value: value.name }];
+    onSearch: (values) => {
+      return [
+        {
+          field: "name",
+          operator: "contains",
+          value: values.name,
+        },
+      ];
     },
     pagination: {
       pageSize: 12,
     },
     sorters: {
-      initial: [{ field: "createdAt", order: "desc" }],
+      initial: [
+        {
+          field: "createdAt",
+          order: "desc",
+        },
+      ],
     },
     filters: {
       initial: [
@@ -53,7 +61,7 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
   });
 
   return (
-    <>
+    <div>
       <List
         breadcrumb={false}
         headerButtons={() => (
@@ -80,7 +88,7 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           }}
         >
           <Table.Column<Company>
-            dataIndex={"name"}
+            dataIndex="name"
             title="Company Title"
             defaultFilteredValue={getDefaultFilter("id", filters)}
             filterIcon={<SearchOutlined />}
@@ -100,19 +108,17 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
               </Space>
             )}
           />
-
           <Table.Column<Company>
-            dataIndex={"totalRevenue"}
+            dataIndex="totalRevenue"
             title="Open deals amount"
-            render={(value, company: Company) => (
+            render={(value, company) => (
               <Text>
                 {currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}
               </Text>
             )}
           />
-
           <Table.Column<Company>
-            dataIndex={"id"}
+            dataIndex="id"
             title="Actions"
             fixed="right"
             render={(value) => (
@@ -125,6 +131,6 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
         </Table>
       </List>
       {children}
-    </>
+    </div>
   );
 };
