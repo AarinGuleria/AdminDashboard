@@ -1,5 +1,9 @@
 import CustomAvatar from "@/components/custom-avatar";
+import { Text } from "@/components/text";
 import { COMPANIES_LIST_QUERY } from "@/graphql/queries";
+import { Company } from "@/graphql/schema.types";
+import { CompaniesListQuery } from "@/graphql/types";
+import { currencyNumber } from "@/utilities";
 import { SearchOutlined } from "@ant-design/icons";
 import {
   CreateButton,
@@ -9,37 +13,30 @@ import {
   List,
   useTable,
 } from "@refinedev/antd";
-import { getDefaultFilter, useGo } from "@refinedev/core";
-import { Input, Space, Table } from "antd";
+import { HttpError, getDefaultFilter, useGo } from "@refinedev/core";
+import { Input, Space, Table, ColProps } from "antd";
 import React from "react";
-import { Text } from "@/components/text";
-import { Company } from "@/graphql/schema.types";
-import { currencyNumber } from "@/utilities";
+
+interface ISearch {
+  name: string;
+}
 
 export const CompanyList = ({ children }: React.PropsWithChildren) => {
   const go = useGo();
-  const { tableProps, filters } = useTable({
+  const { tableProps, filters } = useTable<
+    CompaniesListQuery,
+    HttpError,
+    ISearch
+  >({
     resource: "companies",
-    onSearch: (name) => {
-      //values was used in video in place of name
-      return [
-        {
-          field: "name",
-          operator: "contains",
-          value: name, // values.name here
-        },
-      ];
+    onSearch: (value) => {
+      return [{ field: "name", operator: "contains", value: value.name }];
     },
     pagination: {
       pageSize: 12,
     },
     sorters: {
-      initial: [
-        {
-          field: "createdAt",
-          order: "desc",
-        },
-      ],
+      initial: [{ field: "createdAt", order: "desc" }],
     },
     filters: {
       initial: [
@@ -56,7 +53,7 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
   });
 
   return (
-    <div>
+    <>
       <List
         breadcrumb={false}
         headerButtons={() => (
@@ -83,7 +80,7 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           }}
         >
           <Table.Column<Company>
-            dataIndex="name"
+            dataIndex={"name"}
             title="Company Title"
             defaultFilteredValue={getDefaultFilter("id", filters)}
             filterIcon={<SearchOutlined />}
@@ -105,9 +102,9 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           />
 
           <Table.Column<Company>
-            dataIndex="totalRevenue"
+            dataIndex={"totalRevenue"}
             title="Open deals amount"
-            render={(value, company) => (
+            render={(value, company: Company) => (
               <Text>
                 {currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}
               </Text>
@@ -115,7 +112,7 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           />
 
           <Table.Column<Company>
-            dataIndex="id"
+            dataIndex={"id"}
             title="Actions"
             fixed="right"
             render={(value) => (
@@ -128,6 +125,6 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
         </Table>
       </List>
       {children}
-    </div>
+    </>
   );
 };
