@@ -8,6 +8,7 @@ import { TextIcon } from '@/components/text-icon'
 import { getDateColor } from '@/utilities'
 import dayjs from 'dayjs'
 import CustomAvatar from '@/components/custom-avatar'
+import { useDelete, useNavigation } from '@refinedev/core'
 
 type ProjectCardProps = {
     id: string,
@@ -25,7 +26,8 @@ const ProjectCard = ({ id, title, dueDate, users }: ProjectCardProps) => {
 
 const { token } = theme.useToken();
 
-const edit =() => {}
+const { edit } = useNavigation();
+const { mutate } = useDelete();
 
 const dropdownItems = useMemo(() => {
     const dropdownItems: MenuProps['items'] = [
@@ -34,7 +36,7 @@ const dropdownItems = useMemo(() => {
             key: '1',
             icon: <EyeOutlined />,
             onClick: () => {
-                edit()
+                edit('tasks', id, 'replace')
             }
         },
         {
@@ -42,7 +44,15 @@ const dropdownItems = useMemo(() => {
             label: 'Delete card',
             key: '2',
             icon: <DeleteOutlined />,
-            onClick: () => {}
+            onClick: () => {
+                mutate({
+                    resource: 'tasks',
+                    id,
+                    meta: {
+                        operation: 'tasks'
+                    }
+                })
+            }
         }
     ]
 
@@ -76,12 +86,18 @@ return (
         <Card
             size="small"
             title={<Text ellipsis={{tooltip: title}}>{title}</Text>}
-            onClick={() => edit()}
+            onClick={() => edit('tasks', id, 'replace')}
             extra={
                 <Dropdown
                     trigger={["click"]}
                     menu={{
                         items: dropdownItems,
+                        onPointerDown: (e) => {
+                            e.stopPropagation()
+                        },
+                        onClick: (e) => {
+                            e.domEvent.stopPropagation()
+                        }
                     }}
                     placement='bottom'
                     arrow={{ pointAtCenter: true}}
