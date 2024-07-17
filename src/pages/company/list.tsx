@@ -1,10 +1,5 @@
-import CustomAvatar from "@/components/custom-avatar";
-import { Text } from "@/components/text";
-import { COMPANIES_LIST_QUERY } from "@/graphql/queries";
-import { Company } from "@/graphql/schema.types";
-import { CompaniesListQuery } from "@/graphql/types";
-import { currencyNumber } from "@/utilities";
-import { SearchOutlined } from "@ant-design/icons";
+import React from "react";
+
 import {
   CreateButton,
   DeleteButton,
@@ -13,17 +8,25 @@ import {
   List,
   useTable,
 } from "@refinedev/antd";
-import { HttpError, getDefaultFilter, useGo } from "@refinedev/core";
-import { GetFieldsFromList } from "@refinedev/nestjs-query";
+import { getDefaultFilter, type HttpError, useGo } from "@refinedev/core";
+import type { GetFieldsFromList } from "@refinedev/nestjs-query";
+
+import { SearchOutlined } from "@ant-design/icons";
 import { Input, Space, Table } from "antd";
 
-export const CompanyList = ({ children }: React.PropsWithChildren) => {
+import { PaginationTotal, Text } from "@/components";
+import type { CompaniesListQuery } from "@/graphql/types";
+import { currencyNumber } from "@/utilities";
+
+import { COMPANIES_LIST_QUERY } from "../../graphql/queries";
+import CustomAvatar from "@/components/custom-avatar";
+
+type Company = GetFieldsFromList<CompaniesListQuery>;
+
+export const CompanyListPage = ({ children }: React.PropsWithChildren) => {
   const go = useGo();
-  const { tableProps, filters } = useTable<
-    GetFieldsFromList<CompaniesListQuery>,
-    HttpError,
-    GetFieldsFromList<CompaniesListQuery>
-  >({
+
+  const { tableProps, filters } = useTable<Company, HttpError, Company>({
     resource: "companies",
     onSearch: (values) => {
       return [
@@ -32,18 +35,15 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           operator: "contains",
           value: values.name,
         },
-      ]
-    },
-    pagination: {
-      pageSize: 12,
+      ];
     },
     sorters: {
       initial: [
         {
           field: "createdAt",
           order: "desc",
-        }
-      ]
+        },
+      ],
     },
     filters: {
       initial: [
@@ -51,44 +51,57 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           field: "name",
           operator: "contains",
           value: undefined,
-        }
-      ]
+        },
+      ],
+    },
+    pagination: {
+      pageSize: 12,
     },
     meta: {
-      gqlQuery: COMPANIES_LIST_QUERY
-    }
-  })
+      gqlQuery: COMPANIES_LIST_QUERY,
+    },
+  });
 
   return (
-    <div>
+    <div className="page-container">
       <List
         breadcrumb={false}
-        headerButtons={() => (
-          <CreateButton
-            onClick={() => {
-              go({
-                to: {
-                  resource: "companies",
-                  action: "create",
-                },
-                options: {
-                  keepQuery: true,
-                },
-                type: "replace",
-              })
-            }}
-          />
-        )}
+        headerButtons={() => {
+          return (
+            <CreateButton
+              onClick={() => {
+                // modal is a opening from the url (/companies/new)
+                // to open modal we need to navigate to the create page (/companies/new)
+                // we are using `go` function because we want to keep the query params
+                go({
+                  to: {
+                    resource: "companies",
+                    action: "create",
+                  },
+                  options: {
+                    keepQuery: true,
+                  },
+                  type: "replace",
+                });
+              }}
+            />
+          );
+        }}
       >
         <Table
           {...tableProps}
           pagination={{
             ...tableProps.pagination,
+            pageSizeOptions: ["12", "24", "48", "96"],
+            showTotal: (total) => (
+              <PaginationTotal total={total} entityName="companies" />
+            ),
           }}
+          rowKey="id"
         >
           <Table.Column<Company>
             dataIndex="name"
-            title="Company Title"
+            title="Company title"
             defaultFilteredValue={getDefaultFilter("id", filters)}
             filterIcon={<SearchOutlined />}
             filterDropdown={(props) => (
@@ -96,35 +109,44 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
                 <Input placeholder="Search Company" />
               </FilterDropdown>
             )}
-            render={(value, record) => (
-              <Space>
-                <CustomAvatar
-                  shape="square"
-                  name={record.name}
-                  src={record.avatarUrl}
-                />
-                <Text style={{ whiteSpace: "nowrap" }}>
-                  {record.name}
-                </Text>
-              </Space>
-            )}
+            render={(_, record) => {
+              return (
+                <Space>
+                  <CustomAvatar
+                    shape="square"
+                    name={record.name}
+                    src={record.avatarUrl}
+                  />
+                  <Text
+                    style={{
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {record.name}
+                  </Text>
+                </Space>
+              );
+            }}
           />
           <Table.Column<Company>
-            dataIndex="totalRevenue"
+            dataIndex={"totalRevenue"}
             title="Open deals amount"
-            render={(value, company) => (
-              <Text>
-                {currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}
-              </Text>
-            )}
+            render={(_, company) => {
+              return (
+                <Text>
+                  {currencyNumber(company?.dealsAggregate?.[0].sum?.value || 0)}
+                </Text>
+              );
+            }}
           />
           <Table.Column<Company>
+            fixed="right"
             dataIndex="id"
             title="Actions"
-            fixed="right"
             render={(value) => (
               <Space>
                 <EditButton hideText size="small" recordItemId={value} />
+
                 <DeleteButton hideText size="small" recordItemId={value} />
               </Space>
             )}
@@ -133,5 +155,5 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
       </List>
       {children}
     </div>
-  )
-}
+  );
+};
