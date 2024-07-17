@@ -1,7 +1,7 @@
 import {GraphQLFormattedError} from "graphql";
 
 type Error = {
-    message:string;
+    message: string;
     statusCode: string;
 }
 

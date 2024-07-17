@@ -1,5 +1,5 @@
 import { AccordionHeaderSkeleton } from "@/components";
-import { Text } from "@/components/text";
+import { Text } from "./text";
 
 type Props = React.PropsWithChildren<{
   accordionKey: string;

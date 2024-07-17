@@ -61,7 +61,8 @@ const LatestActivities = () => {
         <List
           itemLayout="horizontal"
           dataSource={Array.from({ length: 5 }).map((_, i) => ({ id: i }))}
-          renderItem={(_, index) => <LatestActivitiesSkeleton key={index} />}
+          renderItem={(_, index) => (<LatestActivitiesSkeleton key={index} />
+          )}
         />
       ) : (
         <List

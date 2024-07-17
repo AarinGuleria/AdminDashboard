@@ -17,13 +17,14 @@ export {
     KanbanColumnSkeleton,
     ProjectCardSkeleton,
     LatestActivitiesSkeleton,
+    
     DashboardTotalCountCard,
     LatestActivities
 };
 
 export * from './tags/user-tag';
 export * from './text';
-export * from "./tasks/kanban/accordion";
+export * from "./accordion";
 export * from "./tasks/form/description";
 export * from "./tasks/form/due-date";
 export * from "./tasks/form/stage";

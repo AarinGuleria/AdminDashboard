@@ -16,7 +16,6 @@ import {
 import { HttpError, getDefaultFilter, useGo } from "@refinedev/core";
 import { GetFieldsFromList } from "@refinedev/nestjs-query";
 import { Input, Space, Table } from "antd";
-import React from "react";
 
 export const CompanyList = ({ children }: React.PropsWithChildren) => {
   const go = useGo();
@@ -33,7 +32,7 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           operator: "contains",
           value: values.name,
         },
-      ];
+      ]
     },
     pagination: {
       pageSize: 12,
@@ -43,8 +42,8 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
         {
           field: "createdAt",
           order: "desc",
-        },
-      ],
+        }
+      ]
     },
     filters: {
       initial: [
@@ -52,13 +51,13 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
           field: "name",
           operator: "contains",
           value: undefined,
-        },
-      ],
+        }
+      ]
     },
     meta: {
-      gqlQuery: COMPANIES_LIST_QUERY,
-    },
-  });
+      gqlQuery: COMPANIES_LIST_QUERY
+    }
+  })
 
   return (
     <div>
@@ -76,7 +75,7 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
                   keepQuery: true,
                 },
                 type: "replace",
-              });
+              })
             }}
           />
         )}
@@ -104,7 +103,9 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
                   name={record.name}
                   src={record.avatarUrl}
                 />
-                <Text style={{ whiteSpace: "nowrap" }}>{record.name}</Text>
+                <Text style={{ whiteSpace: "nowrap" }}>
+                  {record.name}
+                </Text>
               </Space>
             )}
           />
@@ -132,5 +133,5 @@ export const CompanyList = ({ children }: React.PropsWithChildren) => {
       </List>
       {children}
     </div>
-  );
-};
+  )
+}

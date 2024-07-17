@@ -11,6 +11,8 @@ import {
 } from "@ant-design/icons";
 import { Button, Card, Input, Select, Space, Table } from "antd";
 
+import { Contact } from "@/graphql/schema.types";
+
 import { statusOptions } from "@/constants";
 import { COMPANY_CONTACTS_TABLE_QUERY } from "@/graphql/queries";
 
@@ -19,7 +21,7 @@ import { Text } from "@/components/text";
 import CustomAvatar from "@/components/custom-avatar";
 import { ContactStatusTag } from "@/components/tags/contact-status-tag";
 
-type Contact = GetFieldsFromList<CompanyContactsTableQuery>;
+// type Contact = GetFieldsFromList<CompanyContactsTableQuery>;
 
 export const CompanyContactsTable = () => {
   // get params from the url

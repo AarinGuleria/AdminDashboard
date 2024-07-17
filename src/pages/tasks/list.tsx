@@ -202,5 +202,5 @@ const PageSkeleton = () => {
         </KanbanColumnSkeleton>
       ))}
     </KanbanBoardContainer>
-  );
-};
+  )
+}

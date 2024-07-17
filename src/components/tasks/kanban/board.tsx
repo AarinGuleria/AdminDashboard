@@ -33,7 +33,7 @@ type Props ={
     onDragEnd: (event: DragEndEvent) => void
 }
 
-export const KanbanBoard = ({ children,onDragEnd }: React.PropsWithChildren<Props>) => {
+export const KanbanBoard = ({ children, onDragEnd }: React.PropsWithChildren<Props>) => {
 
     const mouseSensor= useSensor(MouseSensor, {
         activationConstraint: {

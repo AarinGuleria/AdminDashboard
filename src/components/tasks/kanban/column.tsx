@@ -16,14 +16,14 @@ type Props ={
 
 const KanbanColumn = ({ 
   children,
-   id,
-   title,
-   description,
-   count,
-   data,
-   onAddClick
+  id,
+  title,
+  description,
+  count,
+  data,
+  onAddClick
 
- }: React.PropsWithChildren<Props>) => {
+}: React.PropsWithChildren<Props>) => {
   const { isOver, setNodeRef, active } = useDroppable({
     id,
     data,

@@ -2,7 +2,7 @@ import { CalendarOutlined } from "@ant-design/icons";
 import { Calendar, Card, List } from "antd";
 import { Text } from "../text";
 import UpcomingEventsSkeleton from "../skeleton/upcoming-events";
-import { Badge } from "antd/lib";
+import { Badge } from "antd";
 import { useList } from "@refinedev/core";
 import { DASHBORAD_CALENDAR_UPCOMING_EVENTS_QUERY } from "@/graphql/queries";
 import { getDate } from "@/utilities/helpers";
